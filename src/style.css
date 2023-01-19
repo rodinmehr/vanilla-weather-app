@@ -39,6 +39,10 @@ li {
     font-weight: 100;
 }
 
+li:first-letter {
+    text-transform: capitalize;
+}
+
 .weather-temperature strong {
     color: rgb(33, 33, 33);
     font-size: 64px;
