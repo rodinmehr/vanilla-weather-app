@@ -28,14 +28,21 @@ function formatDay(timestamp) {
   return days[day];
 }
 
+let celsiusTemperature = null;
+let celsiusForecastMaxTemperatures = [];
+let celsiusForecastMinTemperatures = [];
+
 function displayForecast(response) {
   let forecast = response.data.daily;
   let weatherForecastElement = document.querySelector("#weather-forecast");
-  let days = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
   let forecastHTML = "";
   forecastHTML += `<div class="row">`;
+  celsiusForecastMaxTemperatures = [];
   forecast.forEach(function (forecastDay, index) {
     if (index < 6) {
+      celsiusForecastMaxTemperatures.push(forecastDay.temp.max);
+      celsiusForecastMinTemperatures.push(forecastDay.temp.min);
+
       forecastHTML += `
   <div class="col-2">
     <div class="weather-forecast-date">
@@ -105,26 +112,61 @@ function handleSubmit(event) {
 
 search("New York");
 
-let celsiusTemperature = null;
-
 let form = document.querySelector("#search-form");
 form.addEventListener("submit", handleSubmit);
 
 function displayFahrenheitTemperature(event) {
   event.preventDefault();
   let temperatureElement = document.querySelector("#temperature");
+  let forecastMaxTemperatureElements = document.querySelectorAll(
+    ".weather-forecast-temperature-max"
+  );
+  let forecastMinTemperatureElements = document.querySelectorAll(
+    ".weather-forecast-temperature-min"
+  );
   celsiusLinkElement.classList.remove("active");
   fahrenheitLinkElement.classList.add("active");
   let fahrenheitTemperature = Math.round((celsiusTemperature * 9) / 5 + 32);
   temperatureElement.innerHTML = fahrenheitTemperature;
+
+  forecastMaxTemperatureElements.forEach(
+    (forecastMaxTemperatureElement, index) => {
+      forecastMaxTemperatureElement.innerHTML =
+        Math.round((celsiusForecastMaxTemperatures[index] * 9) / 5 + 32) + "°";
+    }
+  );
+  forecastMinTemperatureElements.forEach(
+    (forecastMinTemperatureElement, index) => {
+      forecastMinTemperatureElement.innerHTML =
+        Math.round((celsiusForecastMinTemperatures[index] * 9) / 5 + 32) + "°";
+    }
+  );
 }
 
 function displayCelsiusTemperature(event) {
   event.preventDefault();
   let temperatureElement = document.querySelector("#temperature");
+  let forecastMaxTemperatureElements = document.querySelectorAll(
+    ".weather-forecast-temperature-max"
+  );
+  let forecastMinTemperatureElements = document.querySelectorAll(
+    ".weather-forecast-temperature-min"
+  );
   fahrenheitLinkElement.classList.remove("active");
   celsiusLinkElement.classList.add("active");
   temperatureElement.innerHTML = Math.round(celsiusTemperature);
+  forecastMaxTemperatureElements.forEach(
+    (forecastMaxTemperatureElement, index) => {
+      forecastMaxTemperatureElement.innerHTML =
+        Math.round(celsiusForecastMaxTemperatures[index]) + "°";
+    }
+  );
+  forecastMinTemperatureElements.forEach(
+    (forecastMinTemperatureElement, index) => {
+      forecastMinTemperatureElement.innerHTML =
+        Math.round(celsiusForecastMinTemperatures[index]) + "°";
+    }
+  );
 }
 
 let fahrenheitLinkElement = document.querySelector("#fahrenheit-link");
